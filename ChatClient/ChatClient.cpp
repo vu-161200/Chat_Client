@@ -12,11 +12,9 @@
 
 #define WM_SOCKET WM_USER + 1
 #define WM_PRIVATE_MESSAGE WM_USER + 2
-
-// Global Variables:
-HINSTANCE hInst;                                // current instance
-WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
-WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
+HINSTANCE hInst;                                
+WCHAR szTitle[MAX_LOADSTRING];                  
+WCHAR szWindowClass[MAX_LOADSTRING];            
 
 typedef struct {
     char id[32];
@@ -32,7 +30,7 @@ int numChatDlgs;
 HWND hDlgConnect;
 HWND hWndListMessage, hWndListClient, hWndEditMessage, hWndBtnSend;
 
-// Forward declarations of functions included in this code module:
+
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -60,19 +58,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     system("pause");*/
     numChatDlgs = 0;
 
-    // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_CHATCLIENT, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
-    // Perform application initialization:
     if (!InitInstance(hInstance, nCmdShow))
     {
         return FALSE;
     }
-
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CHATCLIENT));
-
     MSG msg;
     while (GetMessage(&msg, nullptr, 0, 0))
     {
@@ -82,13 +76,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             DispatchMessage(&msg);
         }
     }
-
     return (int)msg.wParam;
 }
-
-
-
-
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
     WNDCLASSEXW wcex;
@@ -106,10 +95,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_CHATCLIENT);
     wcex.lpszClassName = szWindowClass;
     wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
-
     return RegisterClassExW(&wcex);
 }
-
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     hInst = hInstance; 
@@ -124,8 +111,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
-
-    // Create controls
     hWndListMessage = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("LISTBOX"), TEXT(""), WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOVSCROLL,
         10, 10, 350, 200, hWnd, (HMENU)IDC_LIST_MESSAGE, GetModuleHandle(NULL), NULL);
 
@@ -142,7 +127,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     EnableWindow(hWndListClient, FALSE);
     EnableWindow(hWndEditMessage, FALSE);
     EnableWindow(hWndBtnSend, FALSE);
-
     return TRUE;
 }
 
@@ -154,16 +138,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         if (WSAGETSELECTERROR(lParam))
         {
-            // TODO: 
             closesocket(wParam);
             return 0;
         }
-
         if (WSAGETSELECTEVENT(lParam) == FD_READ)
         {
             char buf[256];
             char cmd[32], state[32];
-
             int ret = recv(client, buf, sizeof(buf), 0);
             buf[ret] = 0;
 
@@ -174,18 +155,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 if (strcmp(state, "OK") == 0)
                 {
-                    // Close connect dialog and change menu state
                     EndDialog(hDlgConnect, 0);
                     EnableMenuItem(GetMenu(hWnd), ID_FILE_CONNECT, MF_DISABLED);
                     EnableMenuItem(GetMenu(hWnd), ID_FILE_DISCONNECT, MF_ENABLED);
-
-                    // Enable controls
                     EnableWindow(hWndListMessage, TRUE);
                     EnableWindow(hWndListClient, TRUE);
                     EnableWindow(hWndEditMessage, TRUE);
                     EnableWindow(hWndBtnSend, TRUE);
-
-                    // Get list of clients
                     send(client, "LIST", 4, 0);
                 }
                 else
@@ -201,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     EnableMenuItem(GetMenu(hWnd), ID_FILE_CONNECT, MF_ENABLED);
                     EnableMenuItem(GetMenu(hWnd), ID_FILE_DISCONNECT, MF_DISABLED);
 
-                    // Clear content and disable controls
+                   
                     SendDlgItemMessageA(hWnd, IDC_LIST_CLIENT, LB_RESETCONTENT, 0, 0);
                     SendDlgItemMessageA(hWnd, IDC_LIST_MESSAGE, LB_RESETCONTENT, 0, 0);
                     SetDlgItemTextA(hWnd, IDC_EDIT_MESSAGE, "");
@@ -252,7 +228,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         if (WSAGETSELECTEVENT(lParam) == FD_CLOSE)
         {
-            // TODO: 
             closesocket(wParam);
             return 0;
         }
@@ -261,7 +236,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
     {
         int wmId = LOWORD(wParam);
-        // Parse the menu selections:
         switch (wmId)
         {
         case ID_FILE_CONNECT:
@@ -328,8 +302,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 if (i < numChatDlgs)
                     return 0;
-
-                // Create new dialog to chat
                 HWND hDlg = CreateDialog(hInst, MAKEINTRESOURCE(IDD_DIALOG_CHAT), hWnd, ChatDlgProc);
                 ShowWindow(hDlg, SW_SHOW);
 
@@ -354,26 +326,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
     }
-    break;
-    case WM_PAINT:
-    {
-        PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(hWnd, &ps);
-        // TODO: Add any drawing code that uses hdc here...
-        EndPaint(hWnd, &ps);
-    }
-    break;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-
-        break;
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    }
     return 0;
 }
-
-// Message handler for about box.
 INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
@@ -393,7 +347,6 @@ INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPa
     return (INT_PTR)FALSE;
 }
 
-// Message handler for connect box.
 INT_PTR CALLBACK ConnectDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
@@ -431,8 +384,6 @@ INT_PTR CALLBACK ConnectDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
     }
     return (INT_PTR)FALSE;
 }
-
-// Message handler for chat box.
 INT_PTR CALLBACK ChatDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
