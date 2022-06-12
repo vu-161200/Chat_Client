@@ -1,0 +1,8 @@
+﻿  ChatClient.cpp
+C:\Users\fptshop\source\repos\Server GUI\ChatClient\ChatClient.cpp(328,57): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\fptshop\source\repos\Server GUI\ChatClient\ChatClient.cpp(340,25): warning C4244: 'initializing': conversion from 'LRESULT' to 'int', possible loss of data
+C:\Users\fptshop\source\repos\Server GUI\ChatClient\ChatClient.cpp(343,41): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\fptshop\source\repos\Server GUI\ChatClient\ChatClient.cpp(445,49): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\fptshop\source\repos\Server GUI\ChatClient\ChatClient.cpp(486,61): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\fptshop\source\repos\Server GUI\ChatClient\ChatClient.cpp(505,26): warning C4477: 'sprintf' : format string '%s' requires an argument of type 'char *', but variadic argument 2 has type 'WPARAM'
+  ChatClient.vcxproj -> C:\Users\fptshop\source\repos\Server GUI\x64\Debug\ChatClient.exe
